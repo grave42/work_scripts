@@ -1,18 +1,26 @@
 import ipaddress
+import socket
+import struct
 import csv
 
-def cvs_maker(csv_filename):
-    with open(csv_filename, 'r') as csv_file:
-        csv_reader = csv.reader(csv_file)
-        for row in csv_reader:
-            if row[2] == "Cyfral":
-                ip_list_cyfral.append(row[0])
-                ip_list_cyfral.append(row[1])
-            elif row[2] == "Ertelecom":
-                ip_list_erth.append(row[0])
-                ip_list_erth.append(row[1])
-            else:
-                ip_error.append(row)
+def ip_range(start_ip, end_ip):
+    start = struct.unpack('>I', socket.inet_aton(start_ip))[0]
+    end = struct.unpack('>I', socket.inet_aton(end_ip))[0]
+
+    return [socket.inet_ntoa(struct.pack('>I', i)) for i in range(start, end + 1)]
+
+
+def cvs_maker2(filename):
+    f = open(filename, 'r')
+    csvreader = csv.reader(f, delimiter=';')
+
+    for row in csvreader:
+        start_ip = row[0]
+        end_ip = row[1]
+        ip_range2 = ip_range(start_ip, end_ip)
+        for ip in ip_range2:
+            ip_list.append(ip)
+
 
 def net_maker(ip_list):
     # Преобразуем IP-адреса в объекты ipaddress.IPv4Address
@@ -22,21 +30,25 @@ def net_maker(ip_list):
     # Выводим найденные подсети
     return subnets
 
+# def cvs_db_request_maker(sub_list):
+#     with open('DB_RE)
+
+
 
 
 if __name__ == '__main__':
-    ip_list_erth = []
-    ip_list_cyfral = []
-    ip_error = []
-    cvs_maker("ip_pools_spb.csv")
-    subnets_erth = []
-    for i in net_maker(ip_list_erth):
-        subnets_erth.append(i)
-    subnets_cyfr = []
-    for i in net_maker(ip_list_cyfral):
-        subnets_cyfr.append(i)
-    for i in subnets_cyfr:
-        print(i)
+    ip_list = []
+    subs_list = []
+    filename = 'erth_spb.csv'
+    cvs_maker2(filename)
+    subs = net_maker(ip_list)
+    with open(f'SUBNET_list_{filename}', 'w', newline='') as csvfile:
+        csvwriter = csv.writer(csvfile)
+        for i in subs:
+            csvwriter.writerow([str(i), '47QUv7J6bR'])
+            subs_list.append(i)
+        print(len(subs_list))
+
     # net_maker()
     # Преобразуем IP-адреса в объекты ipaddress.IPv4Address
     # ip_objects = [ipaddress.IPv4Address(ip) for ip in ip_list]
