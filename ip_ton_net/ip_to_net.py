@@ -18,8 +18,11 @@ cyfr_prod = {
     '10.80.215.0/24': 5,
     '10.154.104.0/21': 5,
     '10.125.187.0/24': 2,
-    '10.125.188.0/22': 2
+    '10.125.188.0/22': 2,
+    '10.81.0.0/19': 7,
+    '10.81.64.0/18': 7
 }
+
 
 erth_prod = {
     '10.80.0.0/17': 2,
@@ -60,14 +63,14 @@ def cvs_db_request_maker(sub_list, company):
     with open(f'DB_REQ_list_{company}.csv', 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
         for subnet in sub_list:
-            if company == 'erth':
-                for key, value in erth_prod.items():
+            if company == 'cyfral':
+                for key, value in cyfr_prod.items():
                     if subnet.subnet_of(ipaddress.ip_network(key)):
                         cgi = value
                         break
                     else:
-                        cgi = 2
-            sel = f'''insert into networks (net, city_id, company_id, conf_group_id) values ('{subnet}', 27, 1, {cgi})'''
+                        cgi = 5
+            sel = f'''insert into networks (net, city_id, company_id, conf_group_id) values ('{subnet}', 27, 1, {cgi});'''
             csvwriter.writerow([sel])
 
 
@@ -77,16 +80,16 @@ def cvs_db_request_maker(sub_list, company):
 if __name__ == '__main__':
     ip_list = []
     subs_list = []
-    filename = 'erth_spb.csv'
+    filename = 'cyfral_spb.csv'
     cvs_maker2(filename)
     subs = net_maker(ip_list)
     with open(f'SUBNET_list_{filename}', 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
         for i in subs:
-            csvwriter.writerow([str(i), 'Ldjhtwrbq24#'])
+            csvwriter.writerow([str(i), 'Cygr21Bw'])
             subs_list.append(i)
         print("Кол-во подсетей: " + str(len(subs_list)))
-    cvs_db_request_maker(subs_list, 'erth')
+    cvs_db_request_maker(subs_list, 'cyfral')
     # net_maker()
     # Преобразуем IP-адреса в объекты ipaddress.IPv4Address
     # ip_objects = [ipaddress.IPv4Address(ip) for ip in ip_list]
