@@ -70,7 +70,7 @@ def cvs_db_request_maker(sub_list, company):
                         break
                     else:
                         cgi = 5
-            sel = f'''insert into networks (net, city_id, company_id, conf_group_id) values ('{subnet}', 27, 1, {cgi});'''
+            sel = f'''insert into networks (net, city_id, company_id, conf_group_id) values ('{subnet}', 27, 2, {cgi});'''
             csvwriter.writerow([sel])
 
 

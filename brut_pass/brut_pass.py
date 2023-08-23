@@ -30,7 +30,7 @@ def get_pass(_ip):
 
 
 if __name__ == '__main__':
-    f = open('test.csv', 'r')
+    f = open('wrong_auth.csv', 'r')
     csvreader = csv.reader(f, delimiter=';')
     for row in csvreader:
         print("Работаю с " + row[0])
