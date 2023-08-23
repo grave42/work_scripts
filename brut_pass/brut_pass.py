@@ -23,13 +23,14 @@ def get_pass(_ip):
                 logger.info(f"{_ip};{pas}")
                 return pas
                 break
-    except Exception as ex:
         logger.warning(f"{_ip};WRONG PASSWORD")
+    except Exception as ex:
+        logger.warning(f"{_ip};DEVICE DOWN")
         print(ex)
 
 
 if __name__ == '__main__':
-    f = open('wrong_auth.csv', 'r')
+    f = open('test.csv', 'r')
     csvreader = csv.reader(f, delimiter=';')
     for row in csvreader:
         print("Работаю с " + row[0])
