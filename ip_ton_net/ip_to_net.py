@@ -33,10 +33,14 @@ erth_prod = {
 }
 
 def ip_range(start_ip, end_ip):
-    start = struct.unpack('>I', socket.inet_aton(start_ip))[0]
-    end = struct.unpack('>I', socket.inet_aton(end_ip))[0]
+    try:
+        start = struct.unpack('>I', socket.inet_aton(start_ip))[0]
+        end = struct.unpack('>I', socket.inet_aton(end_ip))[0]
+        return [socket.inet_ntoa(struct.pack('>I', i)) for i in range(start, end + 1)]
+    except socket.error:
+        print("Invalid IP address format")
+        return None
 
-    return [socket.inet_ntoa(struct.pack('>I', i)) for i in range(start, end + 1)]
 
 
 def cvs_maker2(filename):
@@ -80,16 +84,16 @@ def cvs_db_request_maker(sub_list, company):
 if __name__ == '__main__':
     ip_list = []
     subs_list = []
-    filename = 'cyfral_spb.csv'
+    filename = 'result_erth.csv'
     cvs_maker2(filename)
     subs = net_maker(ip_list)
     with open(f'SUBNET_list_{filename}', 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
         for i in subs:
-            csvwriter.writerow([str(i), 'Cygr21Bw'])
+            csvwriter.writerow([str(i)])
             subs_list.append(i)
         print("Кол-во подсетей: " + str(len(subs_list)))
-    cvs_db_request_maker(subs_list, 'cyfral')
+    # cvs_db_request_maker(subs_list, 'cyfral')
     # net_maker()
     # Преобразуем IP-адреса в объекты ipaddress.IPv4Address
     # ip_objects = [ipaddress.IPv4Address(ip) for ip in ip_list]
