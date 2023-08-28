@@ -105,17 +105,29 @@ async def check_bruce(list_ip, list_bruce):
                 ip[1] = 'UNKNOWN'
     return list_ip
 
-def get_pass(_ip):
-    try:
-        pass_list = ['47QUv7J6bR', 'Ldjhtwrbq24#', 'Cygr21Bw', 'admin', 'mmkgobu']
-        for pas in pass_list:
-            r = requests.get('http://{}/cgi-bin/intercom_cgi?action=get'.format(_ip), auth=('admin', '{}'.format(pas)),
-                             timeout=5)
-            if r.status_code == 200:
-                logger.info(f"{_ip};{pas}")
-                return pas
-                break
-
+def get_pass(list_ip):
+    for ip in list_ip[1:]:
+        print("Брутаю: " + str(ip[0]))
+        try:
+            pass_list = ['47QUv7J6bR', 'Ldjhtwrbq24#', 'Cygr21Bw', 'admin', 'mmkgobu']
+            for pas in pass_list:
+                r = requests.get('http://{}/cgi-bin/intercom_cgi?action=get'.format(ip[0]), auth=('admin', '{}'.format(pas)),
+                                 timeout=10)
+                if r.status_code == 200:
+                    if pas == '47QUv7J6bR':
+                        ip[4] = 'Ertelecom'
+                    elif pas == 'Ldjhtwrbq24#':
+                        ip[4] = 'Ertelecom_spb'
+                    elif pas == 'Cygr21Bw':
+                        ip[4] = 'Cyfral'
+                    elif pas == 'admin':
+                        ip[4] = 'ADMIN'
+                    else:
+                        ip[4] = 'UNKNOWN'
+                    break
+        except Exception:
+            ip[4] = 'DEVICE DOWN'
+    return list_ip
 
 
 
@@ -132,12 +144,13 @@ if __name__ == '__main__':
     ip_plus_cyfral(all_domofon, cyfral)
     print("Домофоны из мониторинга + Цифральские: " + str(len(all_domofon)))
     # Проверка в myhome
-
     all_domofon = asyncio.run(myhome_check(all_domofon))
     print("Проверил в базе myhome: " + str(len(all_domofon)))
     # Проверка в брюсе
     all_domofon = asyncio.run(check_bruce(all_domofon, bruce))
     print("Проверил в Bruce")
+    all_domofon = get_pass(all_domofon)
+    print("Брутанул")
     with open('RESULT.csv', 'w', newline='', encoding='utf-8') as csv_file:
         csv_writer = csv.writer(csv_file)
         for row in all_domofon:
