@@ -6,6 +6,7 @@ import requests
 logger = logging.getLogger("my_logger")
 # Настройка уровня логирования
 logger.setLevel(logging.INFO)
+
 # Создание обработчика
 file_handler = logging.FileHandler("logfile.log")
 formatter = logging.Formatter('%(message)s')  # Установка формата сообщения
@@ -17,7 +18,7 @@ def get_pass(_ip):
     try:
         pass_list = ['GnaiHy', 'GnaiHy9155', 'user1']
         for pas in pass_list:
-            r = requests.get('http://{}/cgi-bin/intercom_cgi?action=get'.format(_ip), auth=('admin', '{}'.format(pas)),
+            r = requests.get('http://{}/cgi-bin/images_cgi'.format(_ip), auth=('user1', '{}'.format(pas)),
                              timeout=5)
             if r.status_code == 200:
                 logger.info(f"{_ip};{pas}")
